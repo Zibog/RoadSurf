@@ -23,5 +23,8 @@
   "scripts": {
     "build": "webpack",
     "dev": "webpack-dev-server --open --content-base=static -w --watch-content-base"
+  },
+  "dependencies": {
+    "obj-file-parser": "^0.5.3"
   }
 }
