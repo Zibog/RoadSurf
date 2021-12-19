@@ -30,7 +30,7 @@ void main() {
 }
 `;
 
-const bus = loadModelFromObj('resources/models/bus2.obj');
+const bus = loadModelFromObj('resources/box.obj');
 
 window.onload = function main(): void {
     const canvas: HTMLCanvasElement = <HTMLCanvasElement>document.querySelector("#gl_canvas");
@@ -55,7 +55,7 @@ window.onload = function main(): void {
             scale: gl.getUniformLocation(shaderProgram, 'scale'),
         },
         textures: {
-            texture: loadTexture(gl, 'resources/circus.png')
+            texture: loadTexture(gl, 'resources/image.jpg')
         }
     };
 
