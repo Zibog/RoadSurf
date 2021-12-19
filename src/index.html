@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FLCar</title>
+</head>
+<body>
+<article id="car-info">
+    <canvas id="main" width="500" height="500"></canvas>
+    <section id="sensors-fuzzy"></section>
+    <section id="output">
+        <section id="sensor-fuzzy-target" class="outparams"></section>
+        <section id="fuzzy-turn" class="outparams"></section>
+        <section id="fuzzy-speed" class="outparams"></section>
+    </section>
+</article>
+<article>
+    <form id="map-settings">
+        <span>Карта:</span>
+        <input type="file" required/>
+        <input type="submit"/>
+    </form>
+    <form id="car-settings">
+        <span>Максимальная скорость:</span>
+        <input id="max-speed" required/>
+        <span>Радиус поворота:</span>
+        <input id="turn-radius" required/>
+        <span>Длина сенсоров:</span>
+        <input id="sensor-length" required/>
+        <input type="submit"/>
+    </form>
+    <form id="tardis">
+        <span>Ускорение времени:</span> <input type="number" required value="1" min="0.3" max="20" step="0.1"/>
+        <input type="submit"/>
+    </form>
+    <div class="psevdoform">
+        <button id="start-button"></button>
+    </div>
+</article>
+<footer>
+    <section>ЛКМ - установка координат цели</section>
+    <section>СКМ или ПКМ - установка координат машинки</section>
+    <section>Вращение колёсика - установка поворота машинки</section>
+    <section>Размер карты: 1000px на 1000px</section>
+    <section>Пустое пространство: белый цвет</section>
+    <section>Препятствие: любой другой</section>
+    <section>Формат карты: png (на других работу не гарантируем)</section>
+</footer>
+</body>
+</html>
