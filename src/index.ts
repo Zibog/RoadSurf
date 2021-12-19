@@ -30,7 +30,7 @@ void main() {
 }
 `;
 
-//const bus = loadModelFromObj('model/bus2.obj');
+const bus = loadModelFromObj('resources/models/bus2.obj');
 
 window.onload = function main(): void {
     const canvas: HTMLCanvasElement = <HTMLCanvasElement>document.querySelector("#gl_canvas");
@@ -55,7 +55,7 @@ window.onload = function main(): void {
             scale: gl.getUniformLocation(shaderProgram, 'scale'),
         },
         textures: {
-            texture: loadTexture(gl, './resources/image.jpg')
+            texture: loadTexture(gl, 'resources/circus.png')
         }
     };
 
@@ -99,8 +99,8 @@ function initShaderProgram(gl: WebGL2RenderingContext, vsSource: string, fsSourc
     return shaderProgram;
 }
 
-function loadTexture(gl: WebGL2RenderingContext, url: string): WebGLTexture {
-    const texture: WebGLTexture = gl.createTexture()!;
+function loadTexture(gl: WebGL2RenderingContext, url: string): WebGLTexture | null {
+    const texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
     const level: number = 0;
