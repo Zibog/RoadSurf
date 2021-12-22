@@ -23,6 +23,7 @@ module.exports = (env) => {
             }),
             new CopyPlugin([
                 {from: './resources/*.png', to: './resources', flatten: true},
+                {from: './resources/*.obj', to: './resources', flatten: true},
                 {from: './resources/*.jpg', to: './resources', flatten: true}
             ]),
         ],
