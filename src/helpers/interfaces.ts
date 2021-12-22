@@ -8,3 +8,9 @@ export interface Transforms {
 export interface Locations {
     perspective?:  WebGLUniformLocation | null
 }
+
+export interface BufferData {
+    positionBuffer: WebGLBuffer,
+    textureCoordBuffer: WebGLBuffer,
+    bufferLength: number
+}

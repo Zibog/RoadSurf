@@ -3,7 +3,7 @@ import {vsSource, fsSource} from './helpers/shaders';
 // Import perspective matrix
 import {perspectiveMatrix, modelMatrix} from './helpers/affine';
 // Import interfaces
-import {Transforms} from './helpers/interfaces'
+import {BufferData, Transforms} from './helpers/interfaces'
 
 let transforms: Transforms = {
     shift: [0, 0],
@@ -41,7 +41,9 @@ window.onload = function main(): void {
         }
     };
 
-    const buffers = initBuffer(gl);
+    const buffers: BufferData[] = [
+        initRoad(gl),
+    ];
 
     let tick: number = 0;
     setInterval(() => {
@@ -107,7 +109,7 @@ function loadTexture(gl: WebGL2RenderingContext, url: string): WebGLTexture | nu
     return texture;
 }
 
-function initBuffer(gl: WebGL2RenderingContext) {
+function initRoad(gl: WebGL2RenderingContext) {
     const points: number[][] = [
         [-1, -1],
         [-1, +1],
@@ -154,16 +156,17 @@ function makeF32ArrayBuffer(gl: WebGL2RenderingContext, array: Iterable<number>)
 }
 
 // @ts-ignore
-function drawScene(gl: WebGL2RenderingContext, programInfo, buffers, tick: number): void {
+function drawScene(gl: WebGL2RenderingContext, programInfo, buffers: BufferData[], tick: number): void {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clearDepth(1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+    // Дорога в массиве буферов за номером 0
     // Отрисовка 5 кусков дороги
     const roadCount = 5;
     for (let i = 0; i < roadCount; i++) {
         transforms.shift[1] = evaluateYShift(i, tick);
-        drawBuffers(gl, programInfo, buffers, transforms);
+        drawBuffers(gl, programInfo, buffers[0], transforms);
     }
 }
 
