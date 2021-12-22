@@ -197,7 +197,6 @@ function drawBuffers(gl: WebGL2RenderingContext, programInfo, buffers, shift: nu
     matrix = m4.yRotate(matrix, rotation[1]);
     matrix = m4.zRotate(matrix, rotation[2]);
     matrix = m4.scale(matrix, scale2[0], scale2[1], scale2[2]);
-    console.log(matrix);
 
     gl.uniform1i(programInfo.uniformLocations.textureData, 0);
     gl.uniform2fv(programInfo.uniformLocations.shift, shift);
