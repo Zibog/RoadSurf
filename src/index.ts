@@ -41,7 +41,8 @@ window.onload = function main(): void {
             model: gl.getUniformLocation(shaderProgram, 'model'),
         },
         textures: {
-            texture: loadTexture(gl, 'resources/road.png')
+            roadTexture: loadTexture(gl, 'resources/road.png'),
+            //busTexture: loadTexture(gl, 'resources/bus.png'),
         }
     };
 
