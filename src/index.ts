@@ -6,7 +6,8 @@ import {perspectiveMatrix, modelMatrix} from './helpers/affine';
 import {Transforms} from './helpers/interfaces'
 
 let transforms: Transforms = {
-    scale: 0.5,
+    shift: [0, 0],
+    scale: 0.825,
     perspective: perspectiveMatrix,
     model: modelMatrix,
 };
@@ -158,20 +159,22 @@ function drawScene(gl: WebGL2RenderingContext, programInfo, buffers, tick: numbe
     gl.clearDepth(1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    drawBuffers(gl, programInfo, buffers, [0, evaluateYShift(0, tick)], transforms);
-    drawBuffers(gl, programInfo, buffers, [0, evaluateYShift(1, tick)], transforms);
-    drawBuffers(gl, programInfo, buffers, [0, evaluateYShift(2, tick)], transforms);
+    // Отрисовка 5 кусков дороги
+    const roadCount = 5;
+    for (let i = 0; i < roadCount; i++) {
+        transforms.shift[1] = evaluateYShift(i, tick);
+        drawBuffers(gl, programInfo, buffers, transforms);
+    }
 }
 
 function evaluateYShift(index: number, tick: number): number {
     let frequency: number = 100;
-    let numberOfSquares: number = 3;
-    return 1.5 - ((tick + (frequency * index)) % (numberOfSquares * frequency)) / frequency;
+    let numberOfSquares: number = 5;
+    return 4 - ((tick + (frequency * index)) % (numberOfSquares * frequency)) / frequency;
 }
 
 // @ts-ignore
-function drawBuffers(gl: WebGL2RenderingContext, programInfo, buffers, shift: number[] | Float32Array,
-                     transforms: Transforms): void {
+function drawBuffers(gl: WebGL2RenderingContext, programInfo, buffers, transforms: Transforms): void {
     gl.bindBuffer(gl.ARRAY_BUFFER, buffers.positionBuffer);
     gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
@@ -183,7 +186,7 @@ function drawBuffers(gl: WebGL2RenderingContext, programInfo, buffers, shift: nu
     gl.useProgram(programInfo.program);
 
     gl.uniform1i(programInfo.uniformLocations.textureData, 0);
-    gl.uniform2fv(programInfo.uniformLocations.shift, shift);
+    gl.uniform2fv(programInfo.uniformLocations.shift, transforms.shift);
     gl.uniform1f(programInfo.uniformLocations.scale, transforms.scale);
     gl.uniformMatrix4fv(programInfo.uniformLocations.projection, true, transforms.perspective);
     gl.uniformMatrix4fv(programInfo.uniformLocations.model, true, transforms.model);
