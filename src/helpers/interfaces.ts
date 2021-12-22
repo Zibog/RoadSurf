@@ -1,4 +1,5 @@
 export interface Transforms {
+    scale: number,
     perspective: number[],
     model: number[],
 }

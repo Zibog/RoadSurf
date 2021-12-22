@@ -6,6 +6,7 @@ import {perspectiveMatrix, modelMatrix} from './helpers/affine';
 import {Transforms} from './helpers/interfaces'
 
 let transforms: Transforms = {
+    scale: 0.5,
     perspective: perspectiveMatrix,
     model: modelMatrix,
 };
@@ -157,9 +158,9 @@ function drawScene(gl: WebGL2RenderingContext, programInfo, buffers, tick: numbe
     gl.clearDepth(1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    drawBuffers(gl, programInfo, buffers, [0, evaluateYShift(0, tick)], 0.5, perspectiveMatrix, modelMatrix);
-    drawBuffers(gl, programInfo, buffers, [0, evaluateYShift(1, tick)], 0.5, perspectiveMatrix, modelMatrix);
-    drawBuffers(gl, programInfo, buffers, [0, evaluateYShift(2, tick)], 0.5, perspectiveMatrix, modelMatrix);
+    drawBuffers(gl, programInfo, buffers, [0, evaluateYShift(0, tick)], transforms);
+    drawBuffers(gl, programInfo, buffers, [0, evaluateYShift(1, tick)], transforms);
+    drawBuffers(gl, programInfo, buffers, [0, evaluateYShift(2, tick)], transforms);
 }
 
 function evaluateYShift(index: number, tick: number): number {
@@ -169,8 +170,8 @@ function evaluateYShift(index: number, tick: number): number {
 }
 
 // @ts-ignore
-function drawBuffers(gl: WebGL2RenderingContext, programInfo, buffers, shift: number[] | Float32Array, scale: number,
-                     projection: number[], model: number[]): void {
+function drawBuffers(gl: WebGL2RenderingContext, programInfo, buffers, shift: number[] | Float32Array,
+                     transforms: Transforms): void {
     gl.bindBuffer(gl.ARRAY_BUFFER, buffers.positionBuffer);
     gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
@@ -183,8 +184,9 @@ function drawBuffers(gl: WebGL2RenderingContext, programInfo, buffers, shift: nu
 
     gl.uniform1i(programInfo.uniformLocations.textureData, 0);
     gl.uniform2fv(programInfo.uniformLocations.shift, shift);
-    gl.uniform1f(programInfo.uniformLocations.scale, scale);
-    gl.uniformMatrix4fv(programInfo.uniformLocations.projection, true, projection);
-    gl.uniformMatrix4fv(programInfo.uniformLocations.model, true, model);
+    gl.uniform1f(programInfo.uniformLocations.scale, transforms.scale);
+    gl.uniformMatrix4fv(programInfo.uniformLocations.projection, true, transforms.perspective);
+    gl.uniformMatrix4fv(programInfo.uniformLocations.model, true, transforms.model);
+
     gl.drawArrays(gl.TRIANGLES, 0, buffers.bufferLength);
 }
