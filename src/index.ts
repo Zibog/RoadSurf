@@ -1,12 +1,13 @@
 // Import shaders
 import {vsSource, fsSource} from './helpers/shaders';
 // Import perspective matrix
-import {m4, perspectiveMatrix} from './helpers/affine';
+import {perspectiveMatrix, modelMatrix} from './helpers/affine';
 // Import interfaces
 import {Transforms} from './helpers/interfaces'
 
 let transforms: Transforms = {
     perspective: perspectiveMatrix,
+    model: modelMatrix,
 };
 
 window.onload = function main(): void {
@@ -31,6 +32,7 @@ window.onload = function main(): void {
             shift: gl.getUniformLocation(shaderProgram, 'shift'),
             scale: gl.getUniformLocation(shaderProgram, 'scale'),
             projection: gl.getUniformLocation(shaderProgram, 'projection'),
+            model: gl.getUniformLocation(shaderProgram, 'model'),
         },
         textures: {
             texture: loadTexture(gl, 'resources/road.png')
@@ -155,9 +157,9 @@ function drawScene(gl: WebGL2RenderingContext, programInfo, buffers, tick: numbe
     gl.clearDepth(1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    drawBuffers(gl, programInfo, buffers, [0, evaluateYShift(0, tick)], 0.5, perspectiveMatrix);
-    drawBuffers(gl, programInfo, buffers, [0, evaluateYShift(1, tick)], 0.5, perspectiveMatrix);
-    drawBuffers(gl, programInfo, buffers, [0, evaluateYShift(2, tick)], 0.5, perspectiveMatrix);
+    drawBuffers(gl, programInfo, buffers, [0, evaluateYShift(0, tick)], 0.5, perspectiveMatrix, modelMatrix);
+    drawBuffers(gl, programInfo, buffers, [0, evaluateYShift(1, tick)], 0.5, perspectiveMatrix, modelMatrix);
+    drawBuffers(gl, programInfo, buffers, [0, evaluateYShift(2, tick)], 0.5, perspectiveMatrix, modelMatrix);
 }
 
 function evaluateYShift(index: number, tick: number): number {
@@ -168,7 +170,7 @@ function evaluateYShift(index: number, tick: number): number {
 
 // @ts-ignore
 function drawBuffers(gl: WebGL2RenderingContext, programInfo, buffers, shift: number[] | Float32Array, scale: number,
-                     projection: number[]): void {
+                     projection: number[], model: number[]): void {
     gl.bindBuffer(gl.ARRAY_BUFFER, buffers.positionBuffer);
     gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
@@ -179,28 +181,10 @@ function drawBuffers(gl: WebGL2RenderingContext, programInfo, buffers, shift: nu
 
     gl.useProgram(programInfo.program);
 
-    function degToRad(d: number) {
-        return d * Math.PI / 180;
-    }
-
-    var translation = [-150, 0, -360];
-    var rotation = [degToRad(190), degToRad(40), degToRad(320)];
-    var scale2 = [1, 1, 1];
-    var fieldOfViewRadians = degToRad(60);
-
-    var aspect = gl.canvas.width / gl.canvas.height;
-    var zNear = 1;
-    var zFar = 2000;
-    var matrix = m4.perspective(fieldOfViewRadians, aspect, zNear, zFar);
-    matrix = m4.translate(matrix, translation[0], translation[1], translation[2]);
-    matrix = m4.xRotate(matrix, rotation[0]);
-    matrix = m4.yRotate(matrix, rotation[1]);
-    matrix = m4.zRotate(matrix, rotation[2]);
-    matrix = m4.scale(matrix, scale2[0], scale2[1], scale2[2]);
-
     gl.uniform1i(programInfo.uniformLocations.textureData, 0);
     gl.uniform2fv(programInfo.uniformLocations.shift, shift);
     gl.uniform1f(programInfo.uniformLocations.scale, scale);
-    gl.uniformMatrix4fv(programInfo.uniformLocations.projection, false, matrix);
+    gl.uniformMatrix4fv(programInfo.uniformLocations.projection, true, projection);
+    gl.uniformMatrix4fv(programInfo.uniformLocations.model, true, model);
     gl.drawArrays(gl.TRIANGLES, 0, buffers.bufferLength);
 }

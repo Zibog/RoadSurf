@@ -1,5 +1,6 @@
 export interface Transforms {
-    perspective?: number[]
+    perspective: number[],
+    model: number[],
 }
 
 export interface Locations {

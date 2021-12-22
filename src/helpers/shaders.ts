@@ -8,11 +8,11 @@ out vec2 texCoord;
 uniform vec2 shift;
 uniform float scale;
 
-uniform mat4 modelView;
+uniform mat4 model;
 uniform mat4 projection;
 
 void main() {
-    gl_Position = projection*modelView*vec4(vertexPosition * scale + shift, 0.0, 1.0);
+    gl_Position = projection * model * vec4(vertexPosition * scale + shift, 0.0, 1.0);
     texCoord = textureCoords;
 }
 `;
