@@ -10,7 +10,7 @@ export interface Locations {
 }
 
 export interface BufferData {
-    positionBuffer: WebGLBuffer,
-    textureCoordBuffer: WebGLBuffer,
+    positionBuffer: WebGLBuffer | null,
+    textureCoordBuffer: WebGLBuffer | null,
     bufferLength: number
 }

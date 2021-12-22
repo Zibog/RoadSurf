@@ -1,9 +1,13 @@
+import * as ObjFileParser from 'obj-file-parser';
 // Import shaders
 import {vsSource, fsSource} from './helpers/shaders';
 // Import perspective matrix
 import {perspectiveMatrix, modelMatrix} from './helpers/affine';
 // Import interfaces
 import {BufferData, Transforms} from './helpers/interfaces'
+// Import objects and (maybe) textures
+import {busObj} from '../resources/bus';
+
 
 let transforms: Transforms = {
     shift: [0, 0],
@@ -43,6 +47,7 @@ window.onload = function main(): void {
 
     const buffers: BufferData[] = [
         initRoad(gl),
+        initObject(gl, busObj),
     ];
 
     let tick: number = 0;
@@ -142,8 +147,33 @@ function initRoad(gl: WebGL2RenderingContext) {
     };
 }
 
-function makeF32ArrayBuffer(gl: WebGL2RenderingContext, array: Iterable<number>): WebGLBuffer {
-    const buffer: WebGLBuffer = gl.createBuffer()!;
+function initObject(gl: WebGL2RenderingContext, objFile: ObjFileParser.ObjFile) {
+    const points: number[][] = objFile.models[0].vertices.map(
+        function (vertex) {
+            return [vertex.x, vertex.y, vertex.z];
+        }
+    );
+
+    const positions: number[] = points.flat();
+
+    const textureCoords: number[] = objFile.models[0].textureCoords.map(
+        function (textureCoords) {
+            return [textureCoords.u, textureCoords.v, textureCoords.w];
+        }
+    ).flat();
+
+    const positionBuffer = makeF32ArrayBuffer(gl, positions);
+    const textureCoordBuffer = makeF32ArrayBuffer(gl, textureCoords);
+
+    return {
+        positionBuffer,
+        textureCoordBuffer,
+        bufferLength: points.length,
+    };
+}
+
+function makeF32ArrayBuffer(gl: WebGL2RenderingContext, array: Iterable<number>): WebGLBuffer | null {
+    const buffer: WebGLBuffer | null = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 
     gl.bufferData(
@@ -168,6 +198,9 @@ function drawScene(gl: WebGL2RenderingContext, programInfo, buffers: BufferData[
         transforms.shift[1] = evaluateYShift(i, tick);
         drawBuffers(gl, programInfo, buffers[0], transforms);
     }
+
+    // Бусик будет за номером 1. Но пока отложим. До лучших времён. TODO
+    //drawBuffers(gl, programInfo, buffers[1], transforms);
 }
 
 function evaluateYShift(index: number, tick: number): number {
