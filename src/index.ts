@@ -4,12 +4,12 @@ import {vsSource, fsSource} from './helpers/shaders';
 // Import perspective matrix
 import {perspectiveMatrix, modelMatrix} from './helpers/affine';
 // Import interfaces
-import {BufferData, Transforms} from './helpers/interfaces'
+import {IBufferData, ITransform} from './helpers/interfaces'
 // Import objects and (maybe) textures
 import {busObj} from '../resources/bus';
 
 
-let transforms: Transforms = {
+let transforms: ITransform = {
     shift: [0, 0],
     scale: 0.825,
     perspective: perspectiveMatrix,
@@ -46,7 +46,7 @@ window.onload = function main(): void {
         }
     };
 
-    const buffers: BufferData[] = [
+    const buffers: IBufferData[] = [
         initRoad(gl),
         initObject(gl, busObj),
     ];
@@ -117,13 +117,13 @@ function loadTexture(gl: WebGL2RenderingContext, url: string): WebGLTexture | nu
 
 function initRoad(gl: WebGL2RenderingContext) {
     const points: number[][] = [
-        [-1, -1],
-        [-1, +1],
-        [+1, +1],
+        [-1, -1, 0],
+        [-1, +1, 0],
+        [+1, +1, 0],
 
-        [-1, -1],
-        [+1, +1],
-        [+1, -1],
+        [-1, -1, 0],
+        [+1, +1, 0],
+        [+1, -1, 0],
     ];
 
     const positions: number[] = points.flat();
@@ -187,7 +187,7 @@ function makeF32ArrayBuffer(gl: WebGL2RenderingContext, array: Iterable<number>)
 }
 
 // @ts-ignore
-function drawScene(gl: WebGL2RenderingContext, programInfo, buffers: BufferData[], tick: number): void {
+function drawScene(gl: WebGL2RenderingContext, programInfo, buffers: IBufferData[], tick: number): void {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clearDepth(1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -211,9 +211,9 @@ function evaluateYShift(index: number, tick: number): number {
 }
 
 // @ts-ignore
-function drawBuffers(gl: WebGL2RenderingContext, programInfo, buffers, transforms: Transforms): void {
+function drawBuffers(gl: WebGL2RenderingContext, programInfo, buffers, transforms: ITransform): void {
     gl.bindBuffer(gl.ARRAY_BUFFER, buffers.positionBuffer);
-    gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition, 2, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, buffers.textureCoordBuffer);

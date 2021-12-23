@@ -1,5 +1,6 @@
 export class Texture {
     private readonly glTexture: WebGLTexture | null;
+
     constructor(gl: WebGL2RenderingContext, image: TexImageSource) {
         this.glTexture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, this.glTexture);

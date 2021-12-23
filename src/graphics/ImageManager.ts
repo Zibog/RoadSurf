@@ -1,5 +1,6 @@
 export class ImageManager {
     private static images: any[];
+
     static loadImages(imagePaths: string[], onLoadComplete: any, onFailure: any) {
         this.images = [];
 
